@@ -5,7 +5,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const userRepo = require("./repo/user");
-const excRepo = require("./repo/excercise");
+const excServ = require("./services/excercise");
+const logServ = require("./services/log");
 
 mongoose.connect(process.env.MONGO_URI);
 
@@ -13,11 +14,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static("public"));
 
-app.post("/api/users/:id/exercises", async (req, res) => {
-  const { id } = req.params;
+app.post("/api/users/:_id/exercises", async (req, res) => {
+  const { _id } = req.params;
   const { description, duration, date } = req.body;
-  const excercise = await excRepo.create(id, description, duration, date);
+  const excercise = await excServ.create(_id, description, duration, date);
   res.json(excercise);
+});
+
+app.get("/api/users/:_id/logs", async (req, res) => {
+  const { _id } = req.params;
+  const { from, to, limit } = req.query;
+  const logs = await logServ.getLog(_id, from, to, limit);
+  res.json(logs);
 });
 
 app
