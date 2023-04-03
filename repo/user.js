@@ -14,4 +14,8 @@ const create = async (username) => {
   return await user.save();
 };
 
-module.exports = { create };
+const getById = async (id) => await User.findById(id);
+
+const getAll = async () => await User.find();
+
+module.exports = { create, getById, getAll };
